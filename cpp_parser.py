@@ -1,53 +1,5 @@
 #This should work as the parser for c++ code
 
-from tree_sitter import Parser, Language
-import tree_sitter_cpp  as tscpp
-
-cpp_lang = Language(tscpp.language())
-parser = Parser(cpp_lang)
-
-
-code = b"""
-#include <iostream>
-#include <string>
-
-// Simple data structure
-struct Config {
-    int id;
-    float velocity;
-};
-
-// Class with encapsulation and a method
-class Robot {
-private:
-    std::string name;
-public:
-    Robot(std::string n) : name(n) {}
-    
-    void status() {
-        std::cout << "Robot " << name << " is active." << std::endl;
-    }
-};
-
-// Standalone function
-int calculate(int a, int b) {
-    return a + b;
-}
-
-int main() {
-    Config cfg = {1, 9.8f};
-    Robot bot("Gemini");
-    
-    bot.status();
-    int result = calculate(10, 20);
-    
-    return 0;
-}
-"""
-
-tree = parser.parse(code)
-root = tree.root_node
-#print(root)
 
 def extract_structs(node, source_code):
     structs = []
@@ -95,9 +47,3 @@ def extract_functions(node, source_code):
     return functions
 
 
-test = extract_structs(root, code)
-test2 = extract_classes(root, code)
-test3 = extract_functions(root, code)
-print(f"Structs : {test}")
-print(f"Classes : {test2}")
-print(f"Functions : {test3}")

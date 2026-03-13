@@ -1,50 +1,6 @@
 #Responsible for extracting classes and functions/methods in js code
 
 
-from tree_sitter import Parser, Language
-import tree_sitter_javascript as tsjs
-
-js_lang = Language(tsjs.language())
-parser = Parser(js_lang)
-
-
-code = b"""
-/**
- * AST Test Suite
- * Target Nodes: VariableDeclaration, ClassDeclaration, 
- * IfStatement, ForStatement, and BinaryExpressions.
- */
-
-const magicNumber = 42;
-let status = "initialized";
-
-class Robot {
-  constructor(name) {
-    this.name = name;
-  }
-
-  // Method with a Conditional and Template Literal
-  identify(code) {
-    if (code === magicNumber) {
-      return `Access Granted to ${this.name}`;
-    } else {
-      return "Access Denied";
-    }
-  }
-}
-
-// Loop to test Sequence and Update Expressions
-for (let i = 0; i < 3; i++) {
-  const bot = new Robot(`Bot_${i}`);
-  const result = bot.identify(i + 40);
-  console.log(result);
-}
-"""
-
-tree = parser.parse(code)
-root = tree.root_node
-#print(root)
-
 def extract_classes(node, source_code):
     classes = [] # Collect the function names
 
@@ -75,7 +31,3 @@ def extract_functions(node, source_code):
     
     return functions
 
-test = extract_classes(root, code)
-test2 = extract_functions(root, code)
-print(f"Classes : {test}")
-print(f"Functions : {test2}")

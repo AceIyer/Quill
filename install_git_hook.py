@@ -1,7 +1,7 @@
 # This is responsible for installing the git hooks onto a users device
 
 import subprocess
-import pathlib as Path
+from pathlib import Path
 import shutil
 import platform
 
@@ -14,7 +14,7 @@ def get_hook_path():
                             capture_output = True,
                             text = True,
                             check = True,
-                            stderr = subprocess.DEVNULL
+                            
                             )
     return Path(result.stdout.strip())
 
