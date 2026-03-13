@@ -22,6 +22,7 @@ def get_hook_script():
     """
     This should be responsible for getting the correct hook based on the OS .sh(Unix based) and .bat(Windows)
     """
+
     if platform.system() == "Windows":
         return "post-commit.bat"
     return "post-commit.sh"
@@ -34,14 +35,20 @@ def install_hook():
     script_name = get_hook_script()
 
     source = Path(__file__).parent/"hooks"/script_name
-    destination = hooks_path/"post-commit"
+    if platform.system() == "Windows":
+        destination = hooks_path / "post-commit.bat"
+    else:
+        destination = hooks_path / "post-commit"
 
     if destination.exists():
-        print("Post-Commit hook already exits.")
+        # Maybe offer to overwrite if you update Quill later!
+        print("Post-Commit hook already exists.")
         return
     
     shutil.copy(source, destination)
 
     if platform.system() != "Windows":
+        # Ensure it is executable
         destination.chmod(0o775)
-    print("Quill git hook installed successfully.")
+        
+    print(f"Quill git hook installed successfully as {destination.name}")

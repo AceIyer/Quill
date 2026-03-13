@@ -1,20 +1,14 @@
 @echo off
 
-REM Get commit count
-for /f %%i in ('git rev-list --count HEAD') do set COMMIT_COUNT=%%i
+REM 1. Get the root directory of the repo
+for /f "tokens=*" %%i in ('git rev-parse --show-toplevel') do set REPO_ROOT=%%i
 
-if %COMMIT_COUNT% LSS 2 (
+REM 2. Check if it's the first commit
+for /f %%i in ('git rev-list --count HEAD') do set COMMIT_COUNT=%%i
+if %COMMIT_COUNT% LSS 1 (
     exit /b 0
 )
 
-REM Current commit
-for /f %%i in ('git rev-parse HEAD') do set CURRENT_COMMIT=%%i
-
-REM Previous commit
-for /f %%i in ('git rev-parse HEAD~1') do set PREVIOUS_COMMIT=%%i
-
-echo current_commit=%CURRENT_COMMIT%
-echo previous_commit=%PREVIOUS_COMMIT%
-
-echo changed_files:
-git diff --name-only HEAD~1 HEAD
+REM 3. Trigger Quill
+echo --- Quill is starting up ---
+python "%REPO_ROOT%\main.py" run
