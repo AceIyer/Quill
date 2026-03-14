@@ -10,11 +10,14 @@ from tree_sitter import Parser, Language
 import tree_sitter_cpp as tscpp
 import tree_sitter_javascript as tsjs
 import tree_sitter_python as tspy
-from rich import print
+from rich.console import Console
 import json
 
 # Calling my parsers
 import python_parser, cpp_parser, js_parser
+
+
+console = Console()
 
 def get_current_time():
     """
@@ -90,17 +93,17 @@ def code_summary(data_list):
      and all the added functions, classes and in cpp structs
      """
      indicolite = "#267D97" # Colour code of indicolit i could find
-     print("Quill Code Summary : " , style = f"bold italic underline {indicolite}", justify = "center")
+     console.print("Quill Code Summary : " , style = f"bold italic underline {indicolite}", justify = "center")
 
      for item in data_list:
-          print(f"\nFile : {item['file']}", style = "green")
+          console.print(f"\nFile : {item['file']}", style = "green")
 
           if item['classes']:
-            print(f"  [bold green]Classes:[/bold green]   {', '.join(item['classes'])}")
+            console.print(f"  [bold green]Classes:[/bold green]   {', '.join(item['classes'])}")
           if item['functions']:
-            print(f"  [bold white]Functions: [/bold white]{', '.join(item['functions'])}")
+            console.print(f"  [bold white]Functions: [/bold white]{', '.join(item['functions'])}")
           if item.get('structs'):
-            print(f"  [bold purple]Structs: [/bold purple]   {', '.join(item['structs'])}")
+            console.print(f"  [bold purple]Structs: [/bold purple]   {', '.join(item['structs'])}")
 
 
 
