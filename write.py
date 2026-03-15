@@ -34,10 +34,12 @@ def get_modified_files():
     """
     This function gets all the modified files that the dev worked on in the project so far 
     """
-    modified_files = subprocess.check_output(['git', 'diff', '--name-only', 'HEAD~1', 'HEAD'], stderr = subprocess.DEVNULL)
-    files = modified_files.decode('utf-8').splitlines()
-
-    return files
+    try:
+        modified_files = subprocess.check_output(['git', 'diff', '--name-only', 'HEAD~1', 'HEAD'], stderr = subprocess.PIPE)
+        files = modified_files.decode('utf-8').splitlines()
+    except subprocess.CalledProcessError:
+        modified_files = subprocess.check_output(['git', 'diff-tree', '--no-commit-id', '--name-only', '-r', 'HEAD' ], stderr = subprocess.DEVNULL)
+    return modified_files.decode('utf-8').splitlines()
 
 def pipeline(files):
     '''
@@ -132,7 +134,7 @@ def reference_system(dev_notes, extracted_data):
                 file_path = file_entry['file']
                 line = match['line']
                 # Replace @add with a Markdown link to that file and line
-                link = f"[**{ref}**]({file_path}#L{line})"
+                link = f"[**{ref}**](../{file_path}#L{line})"
                 dev_notes = dev_notes.replace(f"@{ref}", link)
                 
     return dev_notes
@@ -170,7 +172,7 @@ def write_to_Docs(data_list):
     raw_notes = "\n".join(dev_notes)
 
     #now apply my reference code
-    final_notes = reference_system(dev_notes, data_list)
+    final_notes = reference_system(raw_notes, data_list)
 
     timestamp = get_current_time()
     os.makedirs(".quill", exist_ok=True)
@@ -178,11 +180,16 @@ def write_to_Docs(data_list):
     #md
     with open(".quill/project_documentation.md", "a", encoding="utf-8") as md_file:
         md_file.write(f"\n---\n## {timestamp}\n")
-        md_file.write(f"**Dev Notes:** {final_notes}\n\n")
+        md_file.write(f"Dev Notes:\n {final_notes}\n\n")
         for item in data_list:
             md_file.write(f"### `{item['file']}`\n")
-            if item['classes']: md_file.write(f"- Classes: {', '.join(item['classes'])}\n")
-            if item['functions']: md_file.write(f"- Functions: {', '.join(item['functions'])}\n")
+            if item['classes']:
+                class_names = [c['name'] for c in item['classes']]
+                md_file.write(f"- Classes: {', '.join(class_names)}\n")
+            if item['functions']:
+                  # Extract names from the dictionaries
+                func_names = [f['name'] for f in item['functions']]
+                md_file.write(f"- Functions: {', '.join(func_names)}\n")
             md_file.write("\n")
 
     #json
@@ -196,7 +203,7 @@ def write_to_Docs(data_list):
 
     history.append({
         "timestamp": timestamp,
-        "note": dev_notes,
+        "note": final_notes,
         "files_modified": data_list
     })
 
