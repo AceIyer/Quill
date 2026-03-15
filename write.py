@@ -12,6 +12,7 @@ import tree_sitter_javascript as tsjs
 import tree_sitter_python as tspy
 from rich.console import Console
 import json
+import re  # regex
 
 # Calling my parsers
 import python_parser, cpp_parser, js_parser
@@ -106,6 +107,33 @@ def code_summary(data_list):
             console.print(f"  [bold purple]Structs: [/bold purple]   {', '.join(item['structs'])}")
 
 
+def reference_system(dev_notes, extracted_data):
+    """
+    This is responsible for allowing the user to use @ to link where this block of lives in teh system i
+    in the project-doc.md file , creates a link to the file and block of code
+    """
+    refs = re.findall(r"@(\w+)", dev_notes)
+
+    for ref in refs:
+        # Find the matching data in your extracted list
+        for file_entry in extracted_data:
+            # Check functions, classes, and structs
+            all_items = file_entry['functions'] + file_entry['classes'] + file_entry.get('structs', [])
+            
+            match = next((item for item in all_items if item['name'] == ref), None)
+            
+            if match:
+                file_path = file_entry['file']
+                line = match['line']
+                # Replace @add with a Markdown link to that file and line
+                link = f"[**{ref}**]({file_path}#L{line})"
+                dev_notes = dev_notes.replace(f"@{ref}", link)
+                
+    return dev_notes
+
+
+
+
 
 def write_to_Docs(data_list):
     """
@@ -119,9 +147,24 @@ def write_to_Docs(data_list):
     code_summary(data_list)
 
     #notes from dev
-    print("Describe the changes for the knowledge base.")
-    dev_notes = input("Insert Documentation : ")
-    print("Lets hope the next dev doesn't break anything.")
+    print("=> Add a quick note?")
+    print("--Use @ to link important functions, classes or structs.")
+    print("-- Press Ctrl + D or type DONE to save and exit.")
+    dev_notes = []
+    while True:
+        try:
+            line = input()
+            if line.strip().upper() == "DONE":
+                break
+            dev_notes.append(line)
+        except EOFError: # this should trigger Ctrl+D for a user to save and exit
+            break
+    
+    #this should combine the strings of the dev notes nicely
+    raw_notes = "\n".join(dev_notes)
+
+    #now apply my reference code
+    final_notes = reference_system(dev_notes, data_list)
 
     timestamp = get_current_time()
     os.makedirs(".quill", exist_ok=True)
@@ -129,7 +172,7 @@ def write_to_Docs(data_list):
     #md
     with open(".quill/project_documentation.md", "a", encoding="utf-8") as md_file:
         md_file.write(f"\n---\n## {timestamp}\n")
-        md_file.write(f"**Dev Notes:** {dev_notes}\n\n")
+        md_file.write(f"**Dev Notes:** {final_notes}\n\n")
         for item in data_list:
             md_file.write(f"### `{item['file']}`\n")
             if item['classes']: md_file.write(f"- Classes: {', '.join(item['classes'])}\n")

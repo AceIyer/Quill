@@ -9,7 +9,11 @@ def extract_classes(node, source_code):
 
         if name_node:
             className = source_code[name_node.start_byte : name_node.end_byte].decode("utf-8")
-            classes.append(className)
+            line_num = node.start_point[0] + 1
+            classes.append({
+                "name": className,
+                "line" : line_num
+            })
 
     for child in node.children:
         classes.extend(extract_classes(child, source_code))
@@ -24,7 +28,11 @@ def extract_functions(node, source_code):
 
         if name_node:
             functionName = source_code[name_node.start_byte : name_node.end_byte].decode("utf-8")
-            functions.append(functionName)
+            line_num = node.start_point[0] + 1
+            functions.append({
+                "name": structName,
+                "line" : line_num
+            })
 
     for child in node.children:
         functions.extend(extract_functions(child, source_code))
