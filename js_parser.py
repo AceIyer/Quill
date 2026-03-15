@@ -30,7 +30,7 @@ def extract_functions(node, source_code):
             functionName = source_code[name_node.start_byte : name_node.end_byte].decode("utf-8")
             line_num = node.start_point[0] + 1
             functions.append({
-                "name": structName,
+                "name": functionName,
                 "line" : line_num
             })
 
