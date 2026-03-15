@@ -100,12 +100,18 @@ def code_summary(data_list):
           console.print(f"\nFile : {item['file']}", style = "green")
 
           if item['classes']:
-            console.print(f"  [bold green]Classes:[/bold green]   {', '.join(item['classes'])}")
-          if item['functions']:
-            console.print(f"  [bold white]Functions: [/bold white]{', '.join(item['functions'])}")
-          if item.get('structs'):
-            console.print(f"  [bold purple]Structs: [/bold purple]   {', '.join(item['structs'])}")
+        # Added (L{c['line']}) to show the line number in the terminal
+            class_names = [f"{c['name']} (L{c['line']})" for c in item['classes'] ]
+            console.print(f"  [bold green]Classes:[/bold green]   {', '.join(class_names)}")
 
+          if item['functions']:
+            
+            function_names = [f"{f['name']} (L{f['line']})" for f in item['functions']]
+            console.print(f"  [bold white]Functions: [/bold white]{', '.join(function_names)}")
+
+          if item.get('structs'):
+            struct_names = [f"{s['name']} (L{s['line']})" for s in item['structs']]
+            console.print(f"  [bold magenta]Structs: [/bold magenta]   {', '.join(struct_names)}")
 
 def reference_system(dev_notes, extracted_data):
     """
