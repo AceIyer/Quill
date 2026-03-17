@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: quill-doc
-Version: 1.0.1
+Version: 1.0.3
 Summary: A doc tool that works with git flow to help keep your project documented
 Author-email: Dylan Iyer <iyerdylan01@gmail.com>
 Requires-Python: >=3.9
