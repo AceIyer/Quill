@@ -48,11 +48,14 @@ def get_modified_files():
     This function gets all the modified files that the dev worked on in the project so far 
     """
     try:
-        commit_count = subprocess.check_output(["git", "rev-list", "--count", "HEAD"]).decode("utf-8").strip()
+        #checking if HEAD exists to prevent crash on new repos
+        subprocess.run(["git", "rev-parse", "HEAD"], check = True, capture_output=True)
 
+        commit_count = subprocess.check_output(["git", "rev-list", "--count", "HEAD"]).decode("utf-8").strip()
+        commit_count = int(commit_count)
         if commit_count <= 1:
             #For when i dont have a commit in the tree yet, quill shouldnt crash like before
-            command = ["git", "ls-tree", "r", "HEAD", "--name-only"]
+            command = ["git", "ls-tree", "-r", "HEAD", "--name-only"]
         else:
             command = ["git", "diff", "--name-only", "HEAD~1", "HEAD"]
 
