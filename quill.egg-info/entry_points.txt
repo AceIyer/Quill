@@ -1,2 +1,0 @@
-[console_scripts]
-quill = quill.cli:main

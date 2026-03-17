@@ -1,6 +1,0 @@
-typer
-rich
-tree-sitter
-tree-sitter-cpp
-tree-sitter-python
-tree-sitter-javascript
