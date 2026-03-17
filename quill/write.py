@@ -48,12 +48,19 @@ def get_modified_files():
     This function gets all the modified files that the dev worked on in the project so far 
     """
     try:
-        modified_files = subprocess.check_output(['git', 'diff', '--name-only', 'HEAD~1', 'HEAD'], stderr = subprocess.PIPE)
-        files = modified_files.decode('utf-8').splitlines()
-    except subprocess.CalledProcessError:
-        modified_files = subprocess.check_output(['git', 'diff-tree', '--no-commit-id', '--name-only', '-r', 'HEAD' ], stderr = subprocess.DEVNULL)
-    return modified_files.decode('utf-8').splitlines()
+        commit_count = subprocess.check_output(["git", "rev-list", "--count", "HEAD"]).decode("utf-8").strip()
 
+        if commit_count <= 1:
+            #For when i dont have a commit in the tree yet, quill shouldnt crash like before
+            command = ["git", "ls-tree", "r", "HEAD", "--name-only"]
+        else:
+            command = ["git", "diff", "--name-only", "HEAD~1", "HEAD"]
+
+        modified_files = subprocess.check_output(command).decode('utf-8').splitlines()
+        return modified_files
+    except:
+        return []  # For when theres no commits
+    
 def pipeline(files):
     '''
     This is a mapping dictionary to map the correct file to parsing logic and it handles the 
