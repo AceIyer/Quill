@@ -1,0 +1,29 @@
+[project]
+name = "quill"
+version = "0.1.7"  # bump version if already used
+description = "A doc tool that works with git flow to help keep your project documented"
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.9"
+authors = [{ name = "Dylan Iyer", email = "iyerdylan01@gmail.com" }]
+dependencies = [
+    "typer",
+    "rich",
+    "tree-sitter",
+    "tree-sitter-cpp",
+    "tree-sitter-python",
+    "tree-sitter-javascript"
+]
+
+[project.scripts]
+quill = "quill.cli:main"
+
+[tool.setuptools]
+packages = ["quill"]
+
+
+[tool.setuptools.package-data]
+quill = ["hooks/*"]
+
+[build-system]
+requires = ["setuptools>=65.5.0", "wheel", "build"]
+build-backend = "setuptools.build_meta"
