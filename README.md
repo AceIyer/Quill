@@ -62,8 +62,8 @@ I am a student looking to improve my skills and eventually support all major lan
 
 This project is shared under a **Custom Non-Commercial License**.
 
-* ✅ **Use & Share**: Free for anybody who wants to use it .
-* ❌ **No Resale**: You may not sell this code or profit from it.
+* **Useage**: Free for anybody who wants to use it .
+* **No Resale**: You may not sell this code or profit from it.
 
 > I built this as my portfolio project to give back to the open-source community that has helped me so much. It may not be great but i hope its useful to people and I'll continue to work on it
 
